@@ -51,14 +51,30 @@ def joinLabels(labels1, labels2):
 def updateView():
 	global currentFrameIndex
 	global mode
+	global show
 
 	frame = frames[currentFrameIndex]
 
 	labelsInFrame = joinLabels(labels, tmpLabels)[currentFrameIndex]
 
 	frameShow = frame.copy()
-	for x, y, labelId in labelsInFrame:
-		frameShow = cv2.circle(frameShow, (x, y), 6, (labelId * 20, labelId * 20, labelId * 20), 8)
+	if show:
+		for x, y, labelId in labelsInFrame:
+			frameShow = cv2.circle(frameShow, (x, y), 12, (0, 0, 255), -1)
+			cv2.putText(frameShow, str(labelId), (x - 8, y + 5), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2)
+
+	instructions = np.zeros((len(frameShow), 120, 3), np.uint8)
+	cv2.putText(instructions, 'Q = Quit', (10, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(instructions, 'H = ' + ('Hide' if show else 'Show'), (10, 40), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(instructions, 'Z = <<', (10, 60), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	cv2.putText(instructions, 'X = >>', (10, 80), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	if mode == 'normal':
+		cv2.putText(instructions, 'A = Add', (10, 100), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+	else:
+		cv2.putText(instructions, 'S = Save', (10, 100), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+		cv2.putText(instructions, 'C = Cancel', (10, 120), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
+
+	frameShow = np.concatenate((frameShow, instructions), axis = 1)
 
 	cv2.imshow('Gabarito do desafio de visao computacional Sanick', frameShow)
 
@@ -96,6 +112,7 @@ currentLabelId = 1
 frames = loadFrames(videoId)
 labels = loadLabels(videoId)
 
+show = True
 currentFrameIndex = 0
 mode = 'normal'
 tmpLabels = [[] for _ in range(len(frames))]
@@ -110,6 +127,9 @@ while True:
 	if key == ord('q'):
 		cv2.destroyAllWindows()
 		break
+
+	if key == ord('h'):
+		show = not show
 
 	if key == ord('z'):
 		currentFrameIndex = max(0, currentFrameIndex - 1)
