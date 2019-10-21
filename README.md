@@ -6,7 +6,7 @@ Repositório criado a fim de construir coletivamente o gabarito de cápsulas e g
 
 A quantidade supostamente correta de objetos com defeitos está disponível nesta planilha: https://github.com/Sanick-Equipamentos/desafioVisao/blob/master/Info/quantidade.csv (Soja e cápsula marrom estão invertidas? Encontrei diferenças bem grandes)
 
-Idealmente gostaríamos de encontrar todos eles, mas pode ser que isso não seja possível nem ao menos para humanos por causa da qualidade das imagens. Se você desconfiar de algum objeto que não foi marcado, por favor, envie o arquivo de *label* para o respectivo issue (https://github.com/dan-mk/cv-sanick-gabarito/issues) para que a inclusão possa ser debatida (não vejo necessidade de usar pull requests nesse caso).
+Idealmente gostaríamos de encontrar todos eles, mas pode ser que isso não seja possível nem ao menos para humanos por causa da qualidade das imagens. Se você desconfiar de algum objeto que não foi marcado (ou de algum que foi marcado incorretamente), por favor, envie o arquivo de *label* para o respectivo issue (https://github.com/dan-mk/cv-sanick-gabarito/issues) para que a inclusão (ou exclusão) possa ser debatida (não vejo necessidade de usar pull requests nesse caso).
 
 ## Utilização
 
