@@ -60,7 +60,7 @@ def updateView():
 	frameShow = frame.copy()
 	if show:
 		for x, y, labelId in labelsInFrame:
-			frameShow = cv2.circle(frameShow, (x, y), 12, (0, 0, 255), -1)
+			frameShow = cv2.circle(frameShow, (x, y), 12, (0, 255, 0) if labelId == currentLabelId else (0, 0, 255), -1)
 			cv2.putText(frameShow, str(labelId), (x - 8, y + 5), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2)
 
 	instructions = np.zeros((len(frameShow), 120, 3), np.uint8)
