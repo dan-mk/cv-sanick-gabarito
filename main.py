@@ -21,20 +21,31 @@ def loadFrames(videoId):
 	return frames
 
 
-def loadLabels(videoId, lenFrames):
+def loadLabels(videoId):
+	global currentLabelId
+
 	labelsPath = '%s/labels' % videoId
 	labelFilenames = os.listdir(labelsPath)
 
-	labels = [[] for _ in range(lenFrames)]
+	labels = [[] for _ in range(len(frames))]
 	for labelFilename in labelFilenames:
 		labelPath = '%s/%s' % (labelsPath, labelFilename)
+
+		currentLabelId = max(currentLabelId, int(labelFilename) + 1)
 
 		with open(labelPath, 'r+') as labelFile:
 			for line in labelFile:
 				frameId, x, y = map(int, line.split())
-				labels[frameId // 6].append((x, y, (0, 0, 255)))
+				labels[frameId // 6].append((x, y, int(labelFilename)))
 
 	return labels
+
+
+def joinLabels(labels1, labels2):
+	labelsR = []
+	for i in range(len(frames)):
+		labelsR.append(labels1[i] + labels2[i])
+	return labelsR
 
 
 def updateView():
@@ -43,14 +54,11 @@ def updateView():
 
 	frame = frames[currentFrameIndex]
 
-	if mode == 'adding':
-		labelsInFrame = tmpLabels[currentFrameIndex]
-	else:
-		labelsInFrame = labels[currentFrameIndex]
+	labelsInFrame = joinLabels(labels, tmpLabels)[currentFrameIndex]
 
 	frameShow = frame.copy()
-	for x, y, bgr in labelsInFrame:
-		frameShow = cv2.circle(frameShow, (x, y), 6, bgr, 8)
+	for x, y, labelId in labelsInFrame:
+		frameShow = cv2.circle(frameShow, (x, y), 6, (labelId * 20, labelId * 20, labelId * 20), 8)
 
 	cv2.imshow('Gabarito do desafio de visao computacional Sanick', frameShow)
 
@@ -59,21 +67,38 @@ def onMouse(event, x, y, flags, param):
 	global currentFrameIndex
 	global mode
 	global tmpLabels
+	global currentLabelId
 
 	if event == cv2.EVENT_LBUTTONDOWN and mode == 'adding':
-		tmpLabels[currentFrameIndex].append((x, y, (0, 0, 255)))
+		tmpLabels[currentFrameIndex] = [(x, y, currentLabelId)]
 
 	updateView()
 
 
+def saveLabel(videoId, currentLabelId):
+	labelsPath = '%s/labels' % videoId
+	labelFilenames = os.listdir(labelsPath)
+
+	newLabelFile = open('%s/%d' % (labelsPath, currentLabelId), 'w+')
+	for frameIndex, labelsInFrame in enumerate(tmpLabels):
+		if len(labelsInFrame) == 0:
+			continue
+		x, y, labelId = labelsInFrame[0]
+		frameId = frameIndex * 6
+		newLabelFile.write('%d %d %d\n' % (frameId, x, y))
+	newLabelFile.close()
+
+
 videoId = sys.argv[1]
 
+currentLabelId = 1
+
 frames = loadFrames(videoId)
-labels = loadLabels(videoId, len(frames))
+labels = loadLabels(videoId)
 
 currentFrameIndex = 0
 mode = 'normal'
-tmpLabels = labels.copy()
+tmpLabels = [[] for _ in range(len(frames))]
 
 cv2.namedWindow('Gabarito do desafio de visao computacional Sanick')
 updateView()
@@ -88,21 +113,24 @@ while True:
 
 	if key == ord('z'):
 		currentFrameIndex = max(0, currentFrameIndex - 1)
-		updateView()
 
 	if key == ord('x'):
 		currentFrameIndex = min(len(frames) - 1, currentFrameIndex + 1)
-		updateView()
 
 	if key == ord('a') and mode != 'adding':
-		tmpLabels = labels.copy()
-
 		mode = 'adding'
 
 	if key == ord('s') and mode == 'adding':
-		labels = tmpLabels.copy()
+		labels = joinLabels(labels, tmpLabels)
 
+		saveLabel(videoId, currentLabelId)
+		currentLabelId += 1
+
+		tmpLabels = [[] for _ in range(len(frames))]
 		mode = 'normal'
 
 	if key == ord('c') and mode == 'adding':
+		tmpLabels = [[] for _ in range(len(frames))]
 		mode = 'normal'
+
+	updateView()

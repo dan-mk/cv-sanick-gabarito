@@ -1,6 +1,6 @@
 # Gabarito do desafio de visão computacional Sanick
 
-Repositório criado a fim de construir coletivamente o gabarito de cápsulas e grãos defeituosos para o desafio de visão computacional da Sanick Equipamentos de Precisão (https://github.com/Sanick-Equipamentos/desafioVisao). O objetivo deste repositório é auxiliar todos a identificarem quais objetos devem ser apontados por seus algoritmos. Sinta-se livre para modificar os códigos disponíveis aqui da forma que lhe for útil.
+Repositório criado a fim de construir coletivamente o gabarito de cápsulas e grãos defeituosos para o desafio de visão computacional da Sanick Equipamentos de Precisão (https://github.com/Sanick-Equipamentos/desafioVisao). O objetivo deste repositório é auxiliar todos a identificarem quais objetos devem ser apontados por seus algoritmos. Sinta-se livre para modificar os códigos disponíveis aqui da forma que lhe for útil (mas já aviso que está uma bagunça).
 
 ## Utilização
 
